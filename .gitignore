@@ -1,0 +1,12 @@
+.local/
+results/
+artifacts/
+__pycache__/
+*.pyc
+.venv/
+*.parameters.json
+*.zip
+*.vhd
+*.vhdx
+*.img
+*.tar.gz

@@ -1,0 +1,43 @@
+#cloud-config
+hostname: @NAME@
+ssh_pwauth: false
+disable_root: true
+users:
+  - name: lab
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    lock_passwd: true
+    ssh_authorized_keys:
+      - @SSH_KEY@
+package_update: true
+packages: [python3, haproxy, ufw]
+write_files:
+  - path: /opt/freezer/service.py
+    encoding: b64
+    content: @SERVICE@
+  - path: /etc/haproxy/haproxy.cfg
+    encoding: b64
+    content: @HAPROXY@
+  - path: /etc/systemd/system/freezer-http.service
+    content: |
+      [Unit]
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      User=nobody
+      ExecStart=/usr/bin/python3 /opt/freezer/service.py --backend @BACKEND@
+      Restart=on-failure
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, --now, freezer-http]
+  - [sh, -c, 'if [ "@BACKEND@" = app2 ]; then haproxy -c -f /etc/haproxy/haproxy.cfg && systemctl restart haproxy; else systemctl disable --now haproxy; fi']
+  - [ufw, default, deny, incoming]
+  - [ufw, allow, from, 192.168.250.1, to, any, port, '22', proto, tcp]
+  - [ufw, allow, from, 192.168.250.0/24, to, any, port, '8000', proto, tcp]
+  - [ufw, allow, from, 192.168.250.1, to, any, port, '8080', proto, tcp]
+  - [ufw, allow, from, 192.168.250.1, to, any, port, '9999', proto, tcp]
+  - [ufw, --force, enable]
+  - [touch, /opt/freezer/ready]

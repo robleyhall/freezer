@@ -1,0 +1,24 @@
+global
+    maxconn 1024
+    stats socket ipv4@192.168.250.12:9999 level admin
+    stats timeout 2s
+
+defaults
+    mode tcp
+    timeout connect 1s
+    timeout client 15s
+    timeout server 15s
+    timeout check @CHECK_TIMEOUT@ms
+    retries 0
+
+frontend http_lab
+    bind 192.168.250.12:8080
+    default_backend apps
+
+backend apps
+    balance roundrobin
+    option httpchk GET /health
+    http-check expect status 200
+    default-server inter @INTERVAL@ms fastinter @INTERVAL@ms downinter @INTERVAL@ms fall @FALL@ rise @RISE@
+    server app1 192.168.250.11:8000 check
+    server app2 192.168.250.12:8000 check
