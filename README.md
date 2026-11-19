@@ -9,10 +9,19 @@
 
 ## What this lets you test
 
-This lab lets you **pause an entire test VM for a few seconds, then let it
-continue**, and observe what happens to its applications and their clients.
-It helps answer: do requests stall or fail, do clients time out or reconnect,
-and how quickly does useful work resume?
+**The intention is to simulate the application-visible effects of an Azure VM
+`Freeze` event in a controlled lab.** Microsoft's Scheduled Events terminology
+uses `Freeze` for a temporary VM pause: CPU execution and network connectivity
+may be suspended while memory and open files remain intact. Such pauses can
+occur during memory-preserving host maintenance or live migration. See
+[Azure VM maintenance](https://learn.microsoft.com/en-us/azure/virtual-machines/maintenance-and-updates)
+and [Scheduled Events: Freeze](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/scheduled-events#event-properties).
+
+We approximate that effect by **pausing an entire nested test VM for a few
+seconds, then letting it continue**. This lets you observe its applications and
+clients: do requests stall or fail, do clients time out or reconnect, and how
+quickly does useful work resume? This is not an on-demand Azure platform
+freeze, a live migration, or a claim of identical network and storage behavior.
 
 An Azure VM acts as a Hyper-V node and hosts two smaller, nested VMs. We pause
 one nested VM while the node and the other VM keep running. The pause comes

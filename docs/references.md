@@ -18,6 +18,8 @@ Recheck these before deploying a different size or reusing this lab later.
 - [Microsoft Learn: Scheduled Events](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/scheduled-events)
   specifies IMDS access, Freeze semantics, resource scope, event states, notice,
   and acknowledgment. Synthetic input in this lab is not an Azure event.
+- [Microsoft Learn: Azure VM maintenance](https://learn.microsoft.com/en-us/azure/virtual-machines/maintenance-and-updates)
+  describes VM pauses during memory-preserving host maintenance and live migration.
 - [Microsoft Learn: Azure routing](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview)
   describes user-defined routes and virtual-appliance/IP-forwarding requirements.
 - [Microsoft Learn: Azure NIC IP forwarding](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-network-interface#enable-or-disable-ip-forwarding)
