@@ -7,6 +7,36 @@
 > Example configurations and HTTP test results do not establish support for
 > other workloads or guarantee behavior during real Azure node maintenance.
 
+## What this lets you test
+
+This lab lets you **pause an entire test VM for a few seconds, then let it
+continue**, and observe what happens to its applications and their clients.
+It helps answer: do requests stall or fail, do clients time out or reconnect,
+and how quickly does useful work resume?
+
+An Azure VM acts as a Hyper-V node and hosts two smaller, nested VMs. We pause
+one nested VM while the node and the other VM keep running. The pause comes
+from outside the test VM, so its operating system and applications stop
+together; it is not just stopping one application process.
+
+The included example runs a simple web service on both nested VMs. HAProxy,
+a software load balancer on the second VM, directs connections to either
+service. We compare:
+
+- **Direct access:** connect straight to the VM that will freeze.
+- **React after failure:** let HAProxy notice the frozen VM and send new
+  connections to the healthy VM.
+- **Act on advance notice:** inject a test warning so HAProxy stops sending
+  new connections to that VM before it freezes.
+
+An existing connection stays attached to its original VM; the load balancer
+cannot move it to the healthy one. That connection can still stall. You can
+also test a different workload without a load balancer, but must install it
+and adapt the client and measurements; the supplied results are HTTP-only.
+
+**This tests the effect of one frozen VM, not a freeze of the shared node.**
+It does not reproduce Azure maintenance or generate a real Azure freeze notice.
+
 Operate from **WSL or Linux**. Azure CLI, Bicep, and Python control a Windows
 Server Hyper-V host in Azure. PowerShell runs **only on that remote host**; you
 do not need PowerShell on your workstation.
